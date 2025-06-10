@@ -1,0 +1,156 @@
+import React from 'react';
+// Importa a biblioteca React, essencial para criar componentes.
+
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+// Importa componentes do React Native para estruturar e estilizar a interface.
+
+import { Link } from 'expo-router';
+// Importa o componente Link do Expo Router para navegar entre telas.
+
+interface Restaurant {
+  name: string;
+  rating: number;
+  image: string;
+  distance: string;
+}
+// Define a estrutura (interface) de um restaurante com nome, nota, imagem e distância.
+
+const restaurants: Restaurant[] = [
+  {
+    name: 'Sushi Time',
+    rating: 4.7,
+    image: 'data:image/png;base64,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',
+    distance: '1.5 km',
+  },
+  {
+    name: 'Sushi Akita',
+    rating: 4.5,
+    image: 'https://i.pinimg.com/736x/7b/5e/d2/7b5ed22e1aa4abf2fda4b4bd27488da5.jpg',
+    distance: '2 km'
+  },
+  {
+    name: 'Sushi Miau',
+    rating: 4.5,
+    image: 'https://i.pinimg.com/736x/a3/cc/72/a3cc7217a144540e08d785a8539c7ddb.jpg',
+    distance: '2 km'
+  }
+];
+// Cria um array de restaurantes com informações simuladas: nome, avaliação, imagem e distância.
+
+const Restaurants: React.FC = () => {
+  // Define o componente funcional Restaurants.
+
+  return (
+    <View style={styles.restaurants}>
+      {/* Container principal do componente com padding e margem. */}
+
+      <Text style={styles.title}>Restaurantes</Text>
+      {/* Título da seção de restaurantes. */}
+
+      {restaurants.map((restaurant, index) => {
+        // Percorre o array de restaurantes, criando um card para cada item.
+
+        const cardContent = (
+          <View style={styles.restaurantCard}>
+            {/* Card com layout em linha (imagem + informações). */}
+
+            <Image source={{ uri: restaurant.image }} style={styles.restaurantImage} />
+            {/* Exibe a imagem do restaurante. */}
+
+            <View style={styles.restaurantInfo}>
+              {/* Container das informações do restaurante. */}
+
+              <Text style={styles.restaurantName}>{restaurant.name}</Text>
+              {/* Nome do restaurante com estilo de destaque. */}
+
+              <Text style={styles.restaurantDetails}>
+                Avaliação: {restaurant.rating} | {restaurant.distance} de distância
+              </Text>
+              {/* Informações adicionais: avaliação e distância. */}
+            </View>
+          </View>
+        );
+
+        if (restaurant.name === 'Pizzaria da 232N') {
+          // Verifica se o restaurante é a pizzaria específica para aplicar navegação.
+
+          return (
+            <Link href="/(tabs)/screens/pizza232n" asChild key={index}>
+              {/* Envolve o botão com Link para navegar para a tela da pizzaria. */}
+              <TouchableOpacity>{cardContent}</TouchableOpacity>
+            </Link>
+          );
+        }
+        return (
+          <TouchableOpacity key={index}>
+            {/* Para os outros restaurantes, apenas exibe o card clicável (sem navegação). */}
+            {cardContent}
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  // Define os estilos visuais com StyleSheet, forma recomendada no React Native.
+
+  restaurants: {
+    paddingHorizontal: 15,
+    marginVertical: 20,
+  },
+  // Espaçamento lateral e vertical para a seção de restaurantes.
+
+  title: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginBottom: 15,
+    color: '#2c3e50',
+    textAlign: 'center',
+  },
+  // Estilo do título: tamanho grande, peso médio, cor escura e centralizado.
+
+  restaurantCard: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  // Card com fundo branco, sombra e cantos arredondados, disposto em linha.
+
+  restaurantImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+  },
+  // Estilo da imagem: quadrada e com bordas levemente arredondadas.
+
+  restaurantInfo: {
+    padding: 15,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  // Container de texto com padding, usa flex para ocupar o espaço restante e centraliza verticalmente.
+
+  restaurantName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#e74c3c',
+  },
+  // Nome do restaurante em vermelho escuro e negrito.
+
+  restaurantDetails: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    marginTop: 5,
+  },
+  // Detalhes com texto cinza, menor e com espaçamento superior.
+});
+
+export default Restaurants;
+// Exporta o componente Restaurants para ser utilizado em outras partes do app.
